@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% for produit in produits %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.titre }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ produit.titre }}</h5>
+                    <p class="card-text">{{ produit.description|length > 50 ? produit.description[:50] ~ '...' : produit.description }}</p>
+                    <p class="card-text"><strong>Prix :</strong> {{ produit.prix }} €</p>
+                        <form action="{{ path('ajouter_panier', { id: produit.id }) }}" method="post">
+            <button type="submit" class="btn btn-primary">Ajouter au panier</button>
+        </form>
+                 
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

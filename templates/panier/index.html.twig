@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre panier{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Votre panier</h2>
+    {% if panier.panierProduits is not empty %}
+        <form method="post" action="{{ path('update_panier') }}">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Produit</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total = 0 %}
+                    {% for panierProduit in panier.panierProduits %}
+                        <tr>
+                            <!-- Affichage de l'image -->
+                            <td>
+                                <img src="{{ asset('uploads/images/' ~ panierProduit.produit.image) }}" alt="{{ panierProduit.produit.titre }}" style="width: 80px; height: auto;">
+                            </td>
+                            <td>{{ panierProduit.produit.titre }}</td>
+                            <td>{{ panierProduit.produit.prix }} €</td>
+                             <td>
+                        <input type="number" name="quantites[{{ panierProduit.produit.id }}]" value="{{ panierProduit.quantite }}" min="1" class="form-control" />
+                    </td>
+                            <td>
+                                <a href="{{ path('supprimer_produit_panier', {'id': panierProduit.produit.id}) }}" class="btn btn-danger btn-sm">Supprimer</a>
+                            </td>
+                        </tr>
+                        {% set total = total + (panierProduit.produit.prix * panierProduit.quantite) %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-end">Total :</th>
+                        <th id="total">{{ total }} €</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Commander</button>
+            </div>
+        </form>
+    {% else %}
+        <p>Votre panier est vide.</p>
+    {% endif %}
+</div>
+
+<script>
+    // Dynamically update total when quantity changes
+    const inputs = document.querySelectorAll('input[name^="quantites"]');
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            let total = 0;
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const prix = parseFloat(row.querySelector('td:nth-child(3)').innerText.replace(' €', ''));
+                const quantiteInput = row.querySelector('input[type="number"]');
+                const quantite = parseInt(quantiteInput.value) || 0;
+                total += prix * quantite;
+            });
+            document.getElementById('total').innerText = total.toFixed(2) + ' €';
+        });
+    });
+</script>
+{% endblock %}

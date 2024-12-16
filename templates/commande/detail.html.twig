@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la commande{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Détails de la commande #{{ commande.id }}</h2>
+    
+    <p><strong>Utilisateur :</strong> {{ commande.utilisateur.nom }}</p>
+    <p><strong>Date de la commande :</strong> {{ commande.dateCommande|date('d/m/Y H:i') }}</p>
+    
+    <h3>Produits de la commande</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Prix Unitaire</th>
+                <th>Quantité</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for panierProduit in commande.panier.panierProduits %}
+                <tr>
+                    <td>{{ panierProduit.produit.titre }}</td>
+                    <td>{{ panierProduit.produit.prix }} €</td>
+                    <td>{{ panierProduit.quantite }}</td>
+                    <td>{{ panierProduit.produit.prix * panierProduit.quantite }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <p><strong>Total de la commande :</strong> {{ commande.total }} €</p>
+</div>
+{% endblock %}
